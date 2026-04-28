@@ -1,19 +1,23 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+// Убираем /api, так как json-server работает от корня
+const API_URL = 'http://localhost:3000';
 
 export const getTutors = async (subject = '') => {
-  const response = await axios.get(`${API_URL}/tutors`, { params: { subject } });
+  // json-server поддерживает поиск через параметр q или точное совпадение
+  const params = subject ? { subject_like: subject } : {};
+  const response = await axios.get(`${API_URL}/tutors`, { params });
   return response.data;
 };
 
 export const getReviews = async (tutorId) => {
-  const response = await axios.get(`${API_URL}/reviews/${tutorId}`);
+  // В json-server отзывы обычно фильтруются по tutorId
+  const response = await axios.get(`${API_URL}/reviews`, { params: { tutorId } });
   return response.data;
 };
 
 export const createReview = async (tutorId, reviewData) => {
-  const response = await axios.post(`${API_URL}/reviews/${tutorId}`, reviewData);
+  const response = await axios.post(`${API_URL}/reviews`, { ...reviewData, tutorId });
   return response.data;
 };
 
